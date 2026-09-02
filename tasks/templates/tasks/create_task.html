@@ -1,0 +1,33 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}Post a Task | TaskHive{% endblock %}
+
+{% block content %}
+
+<div class="form-page">
+
+    <div class="form-header">
+        <span class="badge">✨ New Project</span>
+        <h1>Post a New Task</h1>
+        <p>
+            Tell freelancers what you need and receive bids from talented people.
+        </p>
+    </div>
+
+    <div class="form-card">
+
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit" class="primary-button full-button">
+                Publish Task 🚀
+            </button>
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

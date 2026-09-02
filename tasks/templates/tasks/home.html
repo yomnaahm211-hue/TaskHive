@@ -1,0 +1,107 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}Home | TaskHive{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="badge">✨ Freelance Marketplace</span>
+
+        <h1>Find the right task.<br>Find the right talent.</h1>
+
+        <p>
+            TaskHive connects people who need work done
+            with freelancers who can make it happen.
+        </p>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'create_task' %}" class="primary-button">
+                + Post a New Task
+            </a>
+        {% else %}
+            <a href="{% url 'register' %}" class="primary-button">
+                Get Started
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="hero-card">
+        <div class="bee-icon">🐝</div>
+        <h3>Turn ideas into reality</h3>
+        <p>Post a task, receive bids, and choose the perfect freelancer.</p>
+    </div>
+</section>
+
+
+<section class="section-header">
+    <div>
+        <span class="small-title">AVAILABLE NOW</span>
+        <h2>Open Tasks</h2>
+    </div>
+
+    <span class="task-count">{{ tasks|length }} tasks</span>
+</section>
+
+
+<section class="task-grid">
+
+    {% for task in tasks %}
+
+    <article class="task-card">
+
+        <div class="task-top">
+            <span class="category">{{ task.category }}</span>
+
+            <span class="status">
+                {{ task.status }}
+            </span>
+        </div>
+
+        <h3>{{ task.title }}</h3>
+
+        <p class="description">
+            {{ task.description|truncatewords:25 }}
+        </p>
+
+        <div class="task-info">
+            <div>
+                <span>Budget</span>
+                <strong>${{ task.budget }}</strong>
+            </div>
+
+            <div>
+                <span>Posted by</span>
+                <strong>{{ task.created_by.username }}</strong>
+            </div>
+        </div>
+
+        <div class="task-footer">
+            <span>{{ task.created_at|date:"M d, Y" }}</span>
+
+            <a href="{% url 'task_detail' task.id %}" class="view-button">
+                View Details →
+            </a>
+        </div>
+
+    </article>
+
+    {% empty %}
+
+    <div class="empty-state">
+        <div>📋</div>
+        <h3>No open tasks yet</h3>
+        <p>Be the first person to post a task!</p>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'create_task' %}" class="primary-button">
+                Post a Task
+            </a>
+        {% endif %}
+    </div>
+
+    {% endfor %}
+
+</section>
+
+{% endblock %}

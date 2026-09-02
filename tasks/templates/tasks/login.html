@@ -1,0 +1,35 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}Login | TaskHive{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <div class="auth-card">
+
+        <div class="auth-icon">🔐</div>
+
+        <h1>Welcome back</h1>
+        <p>Login to continue to TaskHive.</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit" class="primary-button full-button">
+                Login
+            </button>
+        </form>
+
+        <p class="auth-bottom">
+            Don't have an account?
+            <a href="{% url 'register' %}">Create one</a>
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

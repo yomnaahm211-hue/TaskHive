@@ -1,0 +1,173 @@
+{% extends "tasks/base.html" %}
+
+{% block title %}{{ task.title }} | TaskHive{% endblock %}
+
+{% block content %}
+
+<div class="detail-page">
+
+    <a href="{% url 'home' %}" class="back-link">
+        ← Back to Tasks
+    </a>
+
+    <div class="detail-card">
+
+        <div class="task-top">
+            <span class="category">{{ task.category }}</span>
+
+            <span class="status">
+                {{ task.status }}
+            </span>
+        </div>
+
+        <h1>{{ task.title }}</h1>
+
+        <p class="detail-description">
+            {{ task.description }}
+        </p>
+
+        <div class="detail-info">
+
+            <div>
+                <span>Budget</span>
+                <strong>${{ task.budget }}</strong>
+            </div>
+
+            <div>
+                <span>Created by</span>
+                <strong>{{ task.created_by.username }}</strong>
+            </div>
+
+            <div>
+                <span>Created</span>
+                <strong>{{ task.created_at|date:"M d, Y" }}</strong>
+            </div>
+
+        </div>
+
+        </div>
+
+    <div class="risk-card">
+
+        <div class="section-header">
+            <div>
+                <span class="small-title">AI PROJECT ANALYSIS</span>
+                <h2>Project Risk Assessment</h2>
+            </div>
+        </div>
+
+        <div class="risk-content">
+            {{ risk_analysis|linebreaks }}
+        </div>
+
+    </div>
+
+
+    {% if show_bid_form %}
+
+        <div class="bid-card">
+
+            <div class="warning">
+                ⚠️
+                <strong>
+                    You are about to bid on this project. Ensure you can deliver before the deadline.
+                </strong>
+            </div>
+
+            <h2>Submit Your Bid</h2>
+
+            <form method="post" action="{% url 'create_bid' task.id %}">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button type="submit" class="primary-button">
+                    Submit Bid 💰
+                </button>
+            </form>
+
+        </div>
+
+    {% elif user.is_authenticated and task.status == "Open" and task.created_by != user %}
+
+        <div class="bid-action">
+            <h2>Interested in this task?</h2>
+            <p>Submit your bid and tell the client why you're the right freelancer.</p>
+
+            <a href="{% url 'create_bid' task.id %}" class="primary-button">
+                Make a Bid 💰
+            </a>
+        </div>
+
+    {% endif %}
+
+
+    {% if user == task.created_by %}
+
+        <section class="bids-section">
+
+            <div class="section-header">
+                <div>
+                    <span class="small-title">FREELANCER OFFERS</span>
+                    <h2>All Bids</h2>
+                </div>
+
+                <span class="task-count">
+                    {{ bids|length }} bids
+                </span>
+            </div>
+
+
+            {% for bid in bids %}
+
+            <div class="bid-item">
+
+                <div class="bid-user">
+                    <div class="avatar">
+                        {{ bid.freelancer.username|first|upper }}
+                    </div>
+
+                    <div>
+                        <h3>{{ bid.freelancer.username }}</h3>
+                        <span>{{ bid.created_at|date:"M d, Y" }}</span>
+                    </div>
+                </div>
+
+                <div class="bid-message">
+                    <p>{{ bid.message }}</p>
+                </div>
+
+                <div class="bid-amount">
+                    <strong>${{ bid.amount }}</strong>
+
+                    {% if task.status == "Open" %}
+                        <form method="post"
+                              action="{% url 'choose_bid' task.id bid.id %}">
+                            {% csrf_token %}
+
+                            <button type="submit" class="choose-button">
+                                Choose Winner 👑
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty-state small-empty">
+                <div>💬</div>
+                <h3>No bids yet</h3>
+                <p>Freelancers haven't submitted any bids for this task.</p>
+            </div>
+
+            {% endfor %}
+
+        </section>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
