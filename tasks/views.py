@@ -25,6 +25,22 @@ def home(request):
     )
 
 
+@login_required
+def dashboard(request):
+    my_tasks = (
+        Task.objects
+        .filter(created_by=request.user)
+        .select_related("created_by")
+        .order_by("-created_at")
+    )
+
+    return render(
+        request,
+        "tasks/dashboard.html",
+        {"my_tasks": my_tasks},
+    )
+
+
 def register_view(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)

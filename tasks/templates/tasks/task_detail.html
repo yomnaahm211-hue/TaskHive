@@ -34,7 +34,7 @@
             </div>
 
             <div>
-                <span>Created by</span>
+                <span>Publisher</span>
                 <strong>{{ task.created_by.username }}</strong>
             </div>
 
@@ -45,7 +45,22 @@
 
         </div>
 
-        </div>
+        {% if user.is_authenticated and task.status == "Open" and task.created_by != user %}
+            <div class="bid-action">
+                <h2>Interested in this task?</h2>
+
+                <p>
+                    Submit your application and tell the client why you're the right freelancer.
+                </p>
+
+                <a href="{% url 'create_bid' task.id %}" class="primary-button">
+                    Apply and Submit Bid 💰
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+
 
     <div class="risk-card">
 
@@ -86,17 +101,6 @@
                 </button>
             </form>
 
-        </div>
-
-    {% elif user.is_authenticated and task.status == "Open" and task.created_by != user %}
-
-        <div class="bid-action">
-            <h2>Interested in this task?</h2>
-            <p>Submit your bid and tell the client why you're the right freelancer.</p>
-
-            <a href="{% url 'create_bid' task.id %}" class="primary-button">
-                Make a Bid 💰
-            </a>
         </div>
 
     {% endif %}
